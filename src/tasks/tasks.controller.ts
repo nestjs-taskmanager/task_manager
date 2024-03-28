@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  NotFoundException,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -48,8 +49,10 @@ export class TasksController {
 
   @Get(':id')
   @ApiOkResponse({ type: TaskEntity })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.tasksService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const task = await this.tasksService.findOne(id);
+    if (!task) throw new NotFoundException(`Task #${id} not found`);
+    return task;
   }
 
   @Patch(':id')
