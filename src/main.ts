@@ -1,8 +1,8 @@
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
-import { PrismaClientExceptionFilter } from 'nestjs-prisma';
+import { HttpStatus, ValidationPipe } from '@nestjs/common';
+import { PrismaClientExceptionFilter, PrismaService } from 'nestjs-prisma';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,7 +23,17 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
+  app.useGlobalFilters(
+    new PrismaClientExceptionFilter(httpAdapter, {
+      // Prisma Error Code: HTTP Status Response
+      P2000: HttpStatus.BAD_REQUEST,
+      P2002: HttpStatus.CONFLICT,
+      P2025: HttpStatus.NOT_FOUND,
+    }),
+  );
+
+  const prismaService: PrismaService = app.get(PrismaService);
+  prismaService.$on('error', (event) => console.error(event));
 
   await app.listen(3000, '0.0.0.0');
   console.log(`Application is running on ${await app.getUrl()}`);
