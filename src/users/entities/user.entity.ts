@@ -28,7 +28,6 @@ export class UserEntity implements User {
   @ApiProperty({
     description: 'The name of the user',
     example: 'John Doe',
-    required: false,
     nullable: true,
   })
   name: string | null;
