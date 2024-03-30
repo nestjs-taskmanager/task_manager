@@ -10,6 +10,7 @@ import { PrismaClientExceptionFilter, PrismaService } from 'nestjs-prisma';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('/api');
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -20,14 +21,14 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   const config = new DocumentBuilder()
-    .setTitle('Task Manager API')
-    .setDescription('The Task Manager API description')
+    .setTitle('Task Manager')
+    .setDescription('A Nest.js Task Manager REST API')
     .setVersion('0.1')
     .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('/api/swagger', app, document);
 
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(
