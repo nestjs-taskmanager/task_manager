@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { hash } from 'bcrypt';
-const { EMAIL = '', EMAIL_PASSWORD = '' } = process.env;
+import { roundsOfHashing } from 'src/users/users.service';
 
-const roundsOfHashing = 10;
+const { EMAIL = '', EMAIL_PASSWORD = '' } = process.env;
 
 export const seedAdmin = async (prisma: PrismaClient) => {
   // create two dummy tasks
