@@ -24,46 +24,49 @@ export class TasksController {
     description: 'The task has been successfully created.',
     type: TaskEntity,
   })
-  create(@Body() createTaskDto: CreateTaskDto) {
-    return this.tasksService.create(createTaskDto);
+  async create(@Body() createTaskDto: CreateTaskDto) {
+    return new TaskEntity(await this.tasksService.create(createTaskDto));
   }
 
   @Get('completed')
   @ApiOkResponse({ type: [TaskEntity] })
-  findCompleted() {
-    return this.tasksService.findCompleted(true);
+  async findCompleted() {
+    const tasks = await this.tasksService.findCompleted(true);
+    return tasks.map((task) => new TaskEntity(task));
   }
 
   @Get('pending')
   @ApiOkResponse({ type: [TaskEntity] })
-  findPending() {
-    return this.tasksService.findCompleted(false);
+  async findPending() {
+    const tasks = await this.tasksService.findCompleted(false);
+    return tasks.map((task) => new TaskEntity(task));
   }
 
   @Get()
   @ApiOkResponse({ type: [TaskEntity] })
-  findAll() {
-    return this.tasksService.findAll();
+  async findAll() {
+    const tasks = await this.tasksService.findAll();
+    return tasks.map((task) => new TaskEntity(task));
   }
 
   @Get(':id')
   @ApiOkResponse({ type: TaskEntity })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.tasksService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return new TaskEntity(await this.tasksService.findOne(id));
   }
 
   @Patch(':id')
   @ApiOkResponse({ type: TaskEntity })
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTaskDto: UpdateTaskDto,
   ) {
-    return this.tasksService.update(id, updateTaskDto);
+    return new TaskEntity(await this.tasksService.update(id, updateTaskDto));
   }
 
   @Delete(':id')
   @ApiOkResponse({ type: TaskEntity })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.tasksService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return new TaskEntity(await this.tasksService.remove(id));
   }
 }

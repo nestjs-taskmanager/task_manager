@@ -10,22 +10,27 @@ export class TasksService {
   create(createTaskDto: CreateTaskDto) {
     return this.prisma.task.create({
       data: createTaskDto,
+      include: { user: true },
     });
   }
 
   findAll() {
-    return this.prisma.task.findMany();
+    return this.prisma.task.findMany({
+      include: { user: true },
+    });
   }
 
   findCompleted(completed: boolean) {
     return this.prisma.task.findMany({
       where: { completed },
+      include: { user: true },
     });
   }
 
   findOne(id: number) {
     return this.prisma.task.findUniqueOrThrow({
       where: { id },
+      include: { user: true },
     });
   }
 
@@ -33,12 +38,14 @@ export class TasksService {
     return this.prisma.task.update({
       where: { id },
       data: updateTaskDto,
+      include: { user: true },
     });
   }
 
   remove(id: number) {
     return this.prisma.task.delete({
       where: { id },
+      include: { user: true },
     });
   }
 }
